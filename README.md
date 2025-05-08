@@ -1,4 +1,4 @@
-# RISC-V Labs Template
+# Software Template
 
 This repository serves as a template for organizing RISC-V lab exercises that mix C and assembly code. Each lab is contained within its own directory, and all compiled artifacts (object files, executables, etc.) are centralized in the `build/` folder. Additionally, the repository includes automation scripts to quickly set up new labs and a top-level Makefile for building and running individual labs.
 
@@ -39,7 +39,7 @@ From the project root, run:
 ./bin/create_lab.sh <lab_number>
 ```
 
-This command will generate a new folder `labs/lab<lab_number>/` with the following starter files:
+This command will generate a new folder `software/lab<lab_number>/` with the following starter files:
 - `main.c`
 - `lab<lab_number>.s`
 - `Makefile`
@@ -62,7 +62,7 @@ make LAB=lab01 clean
 
 This command deletes the `build/lab01/` directory.
 
-# Adder Template
+# Hardware Template
 Simple adder module for demonstration purposes.
 
 ## Implementation Status

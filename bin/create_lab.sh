@@ -5,7 +5,7 @@ fi
 
 LAB_NUM=$1
 LAB_NAME="lab${LAB_NUM}"
-LAB_DIR="labs/$LAB_NAME"
+LAB_DIR="software/$LAB_NAME"
 ASM_FILE="lab${LAB_NUM}.s"
 
 mkdir -p "$LAB_DIR" || exit 1
