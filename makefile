@@ -7,8 +7,8 @@ LAB ?= lab01
 
 BUILD_DIR = build/$(LAB)
 
-ASM_SRC = software/$(LAB)/$(LAB).s
-C_SRC   = software/$(LAB)/main.c
+ASM_SRC = software/$(LAB).s   # ASM_SRC = software/$(LAB)/$(LAB).s
+C_SRC   = software/main.c     # C_SRC   = software/$(LAB)/main.c
 
 ASM_OBJ = $(BUILD_DIR)/$(LAB).o
 C_OBJ   = $(BUILD_DIR)/main.o
