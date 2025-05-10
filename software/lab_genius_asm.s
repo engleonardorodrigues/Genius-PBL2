@@ -21,7 +21,7 @@ ST_IDLE:                      # Estado inicial de configurações etc
 
 ST_GEN:
 
-    li     s1, 0            # s1 vai armazenar os 16 bits gerados
+    li     s1, 0            # s1: led_sequence_reg1 vai armazenar os 16 bits gerados (cores
     li     t3, 0            # contador de quantas iterações já fizemos
     li     s4, 8            # s4: Sequence_size (define o tamanho da sequência de acordo com o nível de dificuldade)	
 
@@ -35,25 +35,43 @@ seed_generation:
     slli   s1, s1, 2                  # desloca s1 dois bits à esquerda para encaixar novo par
     or     s1, s1, t2                 # insere os 2 bits gerados no final de s1
     
+    J      ST_SHOW_LEDS                # vai para o estado de mostrar os LEDs
+
+inc_seed:
     # incrementa contagem de geração aleatória
     addi   t3, t3, 1                  # incrementa contador
     blt    t3, s4, seed_generation    # s4 tamanho da sequência (8 fácil, 16 médio, 32 dificil)
     
 ST_SHOW_LEDS:
+    
+    # CONTINUAR IMPLEMENTANDO A ROTINA DE MOSTRAR AS CORES
+    addi t5, s1, 0
+    li t6, 1
+    slli s3, t6, 0            # incrementa contador de LEDs
+    addi t6, t6, 1
+    #sll t5, s1, 2
+    #
+    #
+    j inc_seed
 
 
 
+ST_PLAYER_INPUT:
 
-ST_PLAYER_IN:
 
-
-ST_ADD_COLOR:
+ST_ADD_COLOR: # Para o modo mando eu
 
 
 ST_EVALUATE:
 
 
-ST_END:
+VICTORY: 
+    li s6, 2 # configura o led de vitória
+    j ST_IDLE 
+
+DEFEAT: 
+    li s6, 2 # configura o led de derrota
+    j ST_IDLE 
 
 
 
