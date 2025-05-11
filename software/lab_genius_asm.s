@@ -28,30 +28,29 @@ ST_GEN:
 seed_generation:
     
     # Gera um número (aleatório) para inserir na sequência
-    addi   t1, t1, 1                  # SUBSTITUIR O 2 POR UM CONTADOR VINCULADO AO TEMPO DO BOTÃO START
-    andi   t2, t1, 0b11               # Apenas 2 bits (valores entre 0–3)
- 
-    # Inserie o número (aleatório) na sequência
-    slli   s1, s1, 2                  # desloca s1 dois bits à esquerda para encaixar novo par
-    or     s1, s1, t2                 # insere os 2 bits gerados no final de s1
-    
-    J      ST_SHOW_LEDS                # vai para o estado de mostrar os LEDs
+    addi   t1, t1, 3                # Seed temporária (substituir por lógica adequada)
+    andi   t2, t1, 0b11             # Mascara para obter 2 bits (0-3)
+
+    slli   t4, t3, 1                # Desloca os dois bits para esquerda
+    sll    t5, t2, t4               # Desloca os bits da nova cor para a posição atual
+    or     s1, s1, t5               # Adiciona ao registrador s1
+    addi   t3, t3, 1  
+    j      ST_SHOW_LEDS             # Vai mostrar o LED atual
 
 inc_seed:
     # incrementa contagem de geração aleatória
-    addi   t3, t3, 1                  # incrementa contador
     blt    t3, s4, seed_generation    # s4 tamanho da sequência (8 fácil, 16 médio, 32 dificil)
     
 ST_SHOW_LEDS:
     
+    bnez s3, show_color
+    addi s3, s3, 1
+    j    seed_generation
     # CONTINUAR IMPLEMENTANDO A ROTINA DE MOSTRAR AS CORES
-    addi t5, s1, 0
-    li t6, 1
-    slli s3, t6, 0            # incrementa contador de LEDs
-    addi t6, t6, 1
-    #sll t5, s1, 2
-    #
-    #
+show_color:
+    
+    slli s3, s3, 1            # Habilita a posição correspondente ao LED a ser acesso no momento
+  
     j inc_seed
 
 
