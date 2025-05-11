@@ -25,7 +25,7 @@ ST_GEN:
     li     t3, 0            # contador de quantas iterações já fizemos
     li     s4, 8            # s4: Sequence_size (define o tamanho da sequência de acordo com o nível de dificuldade)	
 
-seed_generation:
+prng_generation:
     
     # Gera um número (aleatório) para inserir na sequência
     addi   t1, t1, 3                # Seed temporária (substituir por lógica adequada)
@@ -35,23 +35,54 @@ seed_generation:
     sll    t5, t2, t4               # Desloca os bits da nova cor para a posição atual
     or     s1, s1, t5               # Adiciona ao registrador s1
     addi   t3, t3, 1  
+    
     j      ST_SHOW_LEDS             # Vai mostrar o LED atual
 
-inc_seed:
+inc_prng_sec:
     # incrementa contagem de geração aleatória
-    blt    t3, s4, seed_generation    # s4 tamanho da sequência (8 fácil, 16 médio, 32 dificil)
+    blt    t3, s4, prng_generation    # s4 tamanho da sequência (8 fácil, 16 médio, 32 dificil)
     
 ST_SHOW_LEDS:
     
-    bnez s3, show_color
-    addi s3, s3, 1
-    j    seed_generation
-    # CONTINUAR IMPLEMENTANDO A ROTINA DE MOSTRAR AS CORES
+    bnez s3, show_color            # Necessário para manter somente 1 bit enable acionado por vez
+    addi s3, s3, 1                 # Aciona o bit enable para ser possível visualizar o LED no jogo
+
 show_color:
     
-    slli s3, s3, 1            # Habilita a posição correspondente ao LED a ser acesso no momento
-  
-    j inc_seed
+    # Extrai os 2 bits da cor atual (t2) e mapeia para 4 bits em s7
+    li   s7, 0                   # Reseta s7
+    
+    # Verifica qual cor está em t2 e configura os bits correspondentes
+    beqz t2,     set_blue        # Se cor = 00 (Blue)
+    li   t5, 1
+    beq  t2, t5, set_green       # Se cor = 01 (Green)
+    li   t5, 2
+    beq  t2, t5, set_yellow      # Se cor = 10 (Yellow)
+    li   t5, 3
+    beq  t2, t5, set_red         # Se cor = 11 (Red)
+    j            end_mapping
+
+set_green:
+    ori  s7, s7, 0b0001          # Green: bits  [1:0] = 01 -> saída 0001 (bit 0)
+    j    end_mapping
+
+set_blue:
+    ori  s7, s7, 0b0010          # Blue: bits   [2:1] = 00 -> saída 0010 (bit 1)
+    j    end_mapping
+
+set_red:
+    ori  s7, s7, 0b0100          # Red: bits    [3:2] = 11 -> saída 0100 (bit 2)
+
+set_yellow:
+    ori  s7, s7, 0b1000          # Yellow: bits [4:3] = 10 -> saída 1000 (bit 3)
+    j    end_mapping
+
+
+    
+end_mapping:
+
+    
+    j inc_prng_sec
 
 
 
@@ -63,6 +94,7 @@ ST_ADD_COLOR: # Para o modo mando eu
 
 ST_EVALUATE:
 
+   #slli s3, s3, 1   Habilita próximo led se o jogador acertar a jogada
 
 VICTORY: 
     li s6, 2 # configura o led de vitória
