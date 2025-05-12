@@ -71,6 +71,15 @@ show_color:
     
     li   s7, 0                   # Reseta s7 (Apaga todos os leds)
     li   s6, 0                   # Desabilita pino (Enable LED)
+    
+    # verificar quantas cores precisam ser setadas (ver valor de s3)
+    # CONTINUAR DAQUI
+
+    addi t0, t0, s3  #  
+    blt  t0, s3, show_sequence_color   # (t3 < s4)
+    j    ST_PLAYER_INPUT
+ 
+show_sequence_color:
 
     # Verifica qual cor está em t2 e configura os bits correspondentes
     
@@ -86,16 +95,16 @@ set_green:
     ori  s7, s7, 0b0001          # Verde      [1:0] = 01 -> saída 0001 (bit 0)
     li   s6, 1                   # Enable_Led
 
-    slli s3, s3, 1               # Rotação a esquerda de um bit
+   ##slli s3, s3, 1               # Rotação a esquerda de um bit
     addi s3, s3, 1               # Insere um novo bit para indicar que mais uma cor foi inserida na sequência
-
+    
     j    ST_PLAYER_INPUT
 
 set_blue:
     ori  s7, s7, 0b0010          # Azul       [2:1] = 00 -> saída 0010 (bit 1)
     li   s6, 1                   # Enable_Led
 
-    slli s3, s3, 1               # Rotação a esquerda de um bit
+   ##slli s3, s3, 1               # Rotação a esquerda de um bit
     addi s3, s3, 1               # Insere um novo bit para indicar que mais uma cor foi inserida na sequência
 
     j    ST_PLAYER_INPUT
@@ -104,7 +113,7 @@ set_red:
     ori  s7, s7, 0b0100          # Vermelho   [3:2] = 11 -> saída 0100 (bit 2)
     li   s6, 1                   # Enable_Led
 
-    slli s3, s3, 1               # Rotação a esquerda de um bit
+   ##slli s3, s3, 1               # Rotação a esquerda de um bit
     addi s3, s3, 1               # Insere um novo bit para indicar que mais uma cor foi inserida na sequência
 
     j    ST_PLAYER_INPUT
@@ -113,10 +122,10 @@ set_yellow:
     ori  s7, s7, 0b1000          # Amarelo    [4:3] = 10 -> saída 1000 (bit 3)
     li   s6, 1                   # Enable_Led
 
-    #andi s6, s6, delay_led
+    #andi s6, s6, delay_led      (Implementar)
 
     # Registrando que um led foi aceso
-    slli s3, s3, 1               # Rotação a esquerda de um bit
+   ##slli s3, s3, 1               # Rotação a esquerda de um bit
     addi s3, s3, 1               # Insere um novo bit para indicar que mais uma cor foi inserida na sequência
 
     j    ST_PLAYER_INPUT
@@ -131,6 +140,11 @@ set_yellow:
 
 
 ST_PLAYER_INPUT:
+
+   li    t5, 0b11                   # Simula apertar o vermelho (11) - CORRETO 
+ # li    t5, 0b01                   # Simula apertar o verde    (01) - INCORRETO
+   li    s4, 2                      # Simula uma sequência de apenas um led (para teste)
+ #  j    ST_EVALUATE
 
     # Simula a entrada do jogador (Implementar no simulador futuramente)
     beqz  s5, input_red              # Jogada 1: Vermelho (11)
@@ -172,11 +186,7 @@ input_green:
     j     ST_EVALUATE
 
 
-   li    t5, 0b11                    # Simula apertar o vermelho (11) - CORRETO 
-  # li    t5, 0b01                   # Simula apertar o verde    (01) - INCORRETO
-   li    s4, 0                       # Simula uma sequência de apenas um led (para teste)
-  #  j    ST_EVALUATE
-    
+
 
 ST_ADD_COLOR: # Label a ser utilizada no modo mando eu
 
@@ -189,8 +199,8 @@ ST_EVALUATE:
     bne   t5, t2, DEFEAT              # Entrada errada → derrota
 
     # Atualiza contador e verifica fim da sequência
-    addi  t5, t6, 1                   # Próxima posição
-    beq   t6, s4, VICTORY             # Se todas entradas corretas → vitória
+    #addi  t5, t6, 1                   # Próxima posição
+    #beq   t6, s4, VICTORY             # Se todas entradas corretas → vitória
     #j     aval_sec_size              # Repete para próxima entrada
     blt    t3, s4, prng_generation    # Avalia se sequência foi concluida (8 fácil, 16 médio, 32 dificil)
     j      VICTORY
