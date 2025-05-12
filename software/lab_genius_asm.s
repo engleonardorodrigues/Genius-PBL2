@@ -114,7 +114,7 @@ set_yellow:
 
 ST_PLAYER_INPUT:
 
-    # Simula a entrada com base no contador s2 (0-3)
+    # Simula a entrada do jogador (Implementar no simulador futuramente)
     beqz  s5, input_red              # Jogada 1: Vermelho (11)
     li    t0, 1
     beq   s5, t0, input_yellow       # Jogada 2: Amarelo (10)
