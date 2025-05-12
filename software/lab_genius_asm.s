@@ -60,39 +60,46 @@ show_color:
     beq  t2, t5, set_yellow      # Se cor = 10 (Yellow)
     li   t5, 3
     beq  t2, t5, set_red         # Se cor = 11 (Red)
-    j            end_mapping
-
+    
 set_green:
-    ori  s7, s7, 0b0001          # Green: bits  [1:0] = 01 -> saída 0001 (bit 0)
-    j    end_mapping
-
+    ori  s7, s7, 0b0001          # Verde    [1:0] = 01 -> saída 0001 (bit 0)
+    # j    end_mapping
+      j  ST_PLAYER_INPUT
 set_blue:
-    ori  s7, s7, 0b0010          # Blue: bits   [2:1] = 00 -> saída 0010 (bit 1)
-    j    end_mapping
-
+    ori  s7, s7, 0b0010          # Azul     [2:1] = 00 -> saída 0010 (bit 1)
+    # j    end_mapping
+       j  ST_PLAYER_INPUT
 set_red:
-    ori  s7, s7, 0b0100          # Red: bits    [3:2] = 11 -> saída 0100 (bit 2)
-
+    ori  s7, s7, 0b0100          # Vermelho [3:2] = 11 -> saída 0100 (bit 2)
+    # j    end_mapping
+      j  ST_PLAYER_INPUT
 set_yellow:
-    ori  s7, s7, 0b1000          # Yellow: bits [4:3] = 10 -> saída 1000 (bit 3)
-    j    end_mapping
-
-
-    
-end_mapping:
-
-    
-    j inc_prng_sec
-
+    ori  s7, s7, 0b1000          # Amarelo  [4:3] = 10 -> saída 1000 (bit 3)
+    # j    end_mapping
+      j  ST_PLAYER_INPUT
 
 
 ST_PLAYER_INPUT:
 
+    li    t5, 0b11                    # Simula apertar o vermelho (11) - CORRETO 
+  # li    t5, 0b01                    # Simula apertar o verde    (01) - INCORRETO
+    li    s4, 0                       # Simula uma sequência de apenas um led (para teste)
+    j    ST_EVALUATE
+    
 
 ST_ADD_COLOR: # Para o modo mando eu
 
 
 ST_EVALUATE:
+   
+    # implementar verificação de modo de jogo (mando eu ou siga eu) 
+    
+    bne   t5, t2, DEFEAT              # Entrada errada → derrota
+
+    # Atualiza contador e verifica fim da sequência
+    addi  t5, t6, 1                   # Próxima posição
+    beq   t6, s4, VICTORY             # Se todas entradas corretas → vitória
+    j     prng_generation             # ST_PLAYER_INPUT             # Repete para próxima entrada
 
    #slli s3, s3, 1   Habilita próximo led se o jogador acertar a jogada
 
@@ -104,14 +111,5 @@ DEFEAT:
     li s6, 2 # configura o led de derrota
     j ST_IDLE 
 
-
-
-#    lw t1, 0(a0)  
-#    lw t2, 0(a1)
-
-#    add t0, t1, t2
-
-#    sw t0, 0(a2)
-
-    ret    
+    ret    # Usado em conjunto com o main
     
