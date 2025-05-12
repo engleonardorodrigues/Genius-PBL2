@@ -13,9 +13,26 @@ genius_game:
 
 ST_IDLE:                             # Estado inicial de configurações etc
 
+###### Definindo condição inicial dos registradores #####  (Reset ou estado de Vitória ou derrota)
+ 
+    addi s1, zero, 0
+    addi s2, zero, 0
+    addi s3, zero, 0
+    addi s4, zero, 0
+    addi s5, zero, 0
+    addi s6, zero, 0
+    addi s7, zero, 0
+
+###### Configurações do Game #####
+
     li   s0,  0b0000                 # Modo = Siga (bit0 = 0), Velocidade = Lenta (bit1 = 0) Dificuldade = (bit2 e 3 = 0)  
-    li   t0,  START_BIT
-    
+
+###### Aguarda START para iniciar o jogo #####
+
+    li   t0,  START_BIT              # Aguarda botão START ser pressionado
+
+    # addi t1,  t1, 1 #(Seed)        # Seed temporária (substituir por lógica adequada)
+
     beqz t0,  ST_GEN                 # Se start pressionado, vai para o estado de gerar a sequência
     j         ST_IDLE                # Se não, continua no estado de idle
 
@@ -36,12 +53,12 @@ prng_generation:
     or     s1, s1, t5                # Adiciona ao registrador s1
     addi   t3, t3, 1  
     
-    j      ST_SHOW_LEDS              # Vai mostrar o LED atual
+#    j      ST_SHOW_LEDS              # Vai mostrar o LED atual
 
-aval_sec_size:                        # incrementa contagem de geração aleatória
+#aval_sec_size:                        # incrementa contagem de geração aleatória
     
-    blt    t3, s4, prng_generation   # Avalia se sequência foi concluida (8 fácil, 16 médio, 32 dificil)
-    j      VICTORY
+#    blt    t3, s4, prng_generation   # Avalia se sequência foi concluida (8 fácil, 16 médio, 32 dificil)
+#    j      VICTORY
 
 ST_SHOW_LEDS:
     
@@ -98,6 +115,7 @@ set_yellow:
 
     #andi s6, s6, delay_led
 
+    # Registrando que um led foi aceso
     slli s3, s3, 1               # Rotação a esquerda de um bit
     addi s3, s3, 1               # Insere um novo bit para indicar que mais uma cor foi inserida na sequência
 
@@ -140,23 +158,23 @@ input_red:
 
 input_yellow:
     li    t5, 0b10                   # Amarelo
-    addi  s5, s5, 1
+    addi  s5, s5, 1                  # Registra a jogada do player
     j     ST_EVALUATE
 
 input_blue:
     li    t5, 0b00                   # Azul
-    addi  s5, s5, 1
+    addi  s5, s5, 1                  # Registra a jogada do player
     j     ST_EVALUATE
 
 input_green:
     li    t5, 0b01                   # Verde
-    addi  s5, s5, 1
+    addi  s5, s5, 1                  # Registra a jogada do player
     j     ST_EVALUATE
 
 
-  # li    t5, 0b11                    # Simula apertar o vermelho (11) - CORRETO 
-  # li    t5, 0b01                    # Simula apertar o verde    (01) - INCORRETO
-  # li    s4, 0                       # Simula uma sequência de apenas um led (para teste)
+   li    t5, 0b11                    # Simula apertar o vermelho (11) - CORRETO 
+  # li    t5, 0b01                   # Simula apertar o verde    (01) - INCORRETO
+   li    s4, 0                       # Simula uma sequência de apenas um led (para teste)
   #  j    ST_EVALUATE
     
 
@@ -173,7 +191,10 @@ ST_EVALUATE:
     # Atualiza contador e verifica fim da sequência
     addi  t5, t6, 1                   # Próxima posição
     beq   t6, s4, VICTORY             # Se todas entradas corretas → vitória
-    j     aval_sec_size               # Repete para próxima entrada
+    #j     aval_sec_size              # Repete para próxima entrada
+    blt    t3, s4, prng_generation    # Avalia se sequência foi concluida (8 fácil, 16 médio, 32 dificil)
+    j      VICTORY
+
 
    #slli s3, s3, 1   Habilita próximo led se o jogador acertar a jogada
 
