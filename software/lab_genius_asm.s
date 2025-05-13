@@ -31,7 +31,7 @@ ST_IDLE:                             # Estado inicial de configurações etc
 
     li     t0,  START_BIT              # Aguarda botão START ser pressionado
 
-    # addi t1,  t1, 1 #(Seed)        # Seed temporária (substituir por lógica adequada)
+     #addi t1,  t1, 1 #(Seed)        # Seed temporária (substituir por lógica adequada)
 
     beqz   t0,  ST_GEN                 # Se start pressionado, vai para o estado de gerar a sequência
     j           ST_IDLE                # Se não, continua no estado de idle
@@ -126,27 +126,43 @@ ST_PLAYER_INPUT:
 
     li    t0, 0
     li    s5, 0
-    li    t5, 0b11                   # Simula apertar o vermelho (11) - CORRETO 
+    li    t5, 0b11                  # Simula apertar o vermelho (11) - CORRETO 
 
     # Simula a entrada do jogador (Implementar no simulador futuramente)
 
-    beqz  s5,     INPUT_RED          # Jogada 1: Vermelho (11)
-    li    t0, 1
-    beq   s5, t0, INPUT_YELLOW       # Jogada 2: Amarelo (10)
-    li    t0, 2
-    beq   s5, t0, INPUT_GREEN        # Jogada 3: Verde (00)
-    li    t0, 3
-    beq   s5, t0, INPUT_BLUE         # Jogada 4: Azul (01)
-    li    t0, 4
-    beq   s5, t0, INPUT_RED          # Jogada 5: Vermelho (11)
-    li    t0, 5
-    beq   s5, t0, INPUT_YELLOW       # Jogada 6: Amarelo (10)
-    li    t0, 6
-    beq   s5, t0, INPUT_GREEN        # Jogada 7: Azul (00)
-    li    t0, 7
-    beq   s5, t0, INPUT_GREEN        # Jogada 8: Verde (01)
-    li    t0, 8
-    j     DEFEAT                     # Entrada inválida
+    beq  t5, t2  INPUT_RED          # Jogada 1: Vermelho (11)
+    
+    li   t5,     0b10               # Simula jogador apertando botão da cor amarela  
+    beq  t5, t2, INPUT_YELLOW       # Jogada 2: Amarelo (10)
+
+    li   t5,     0b01               # Simula jogador apertando botão da cor verde   
+    beq  t5, t2, INPUT_GREEN        # Jogada 3: Verde (00)
+   
+    li   t5,     0b00               # Simula jogador apertando botão da cor azul     
+    beq  t5, t2, INPUT_BLUE         # Jogada 4: Azul (01)
+ 
+    j            DEFEAT             # Entrada inválida
+
+
+
+
+#    beqz  s5,     INPUT_RED          # Jogada 1: Vermelho (11)
+#    li    t0, 1
+#    beq   s5, t0, INPUT_YELLOW       # Jogada 2: Amarelo (10)
+#    li    t0, 2
+#    beq   s5, t0, INPUT_GREEN        # Jogada 3: Verde (00)
+#    li    t0, 3
+#    beq   s5, t0, INPUT_BLUE         # Jogada 4: Azul (01)
+#    li    t0, 4
+#    beq   s5, t0, INPUT_RED          # Jogada 5: Vermelho (11)
+#    li    t0, 5
+#    beq   s5, t0, INPUT_YELLOW       # Jogada 6: Amarelo (10)
+#    li    t0, 6
+#    beq   s5, t0, INPUT_GREEN        # Jogada 7: Azul (00)
+#    li    t0, 7
+#    beq   s5, t0, INPUT_GREEN        # Jogada 8: Verde (01)
+#    li    t0, 8
+#    j     DEFEAT                     # Entrada inválida
 
 
 # Aciona a saída do respectivo LED
